@@ -1,0 +1,42 @@
+version: '3'
+services:
+  # Redis service configuration
+  redis:
+    build:
+      context: ./redis # Path to the Redis Dockerfile's directory
+    image: my-redis-image # Provide a custom image name
+    networks:
+      - my-network
+    env_file: 
+      - .env
+
+  # Go application service configuration
+  go-app:
+    build:
+      context: ./app # Path to the Go Application Dockerfile's directory
+    image: my-go-app-image # Optionally, you can provide a custom image name
+    networks:
+      - my-network
+    ports:
+      - "8080:8080" # Expose port 8080 to the host machine
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis.conf # Mount the custom Redis configuration
+    env_file: 
+      - .env # Load environment variables from .env file
+
+  # Nginx service configuration
+  nginx:
+    build:
+      context: ./nginx # Path to the Nginx Dockerfile's directory
+    image: my-nginx-image # Provide a custom image name for Nginx
+    ports:
+      - "8089:80" # Expose port 8089 for Nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf # Mount the custom Nginx configuration
+    networks:
+      - my-network 
+    restart: always
+
+networks:
+  my-network:
+    driver: bridge
