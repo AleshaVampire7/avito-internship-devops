@@ -5,6 +5,8 @@ services:
     build:
       context: ./redis # Path to the Redis Dockerfile's directory
     image: my-redis-image # Provide a custom image name
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis.conf
     networks:
       - my-network
     env_file: 
@@ -19,8 +21,6 @@ services:
       - my-network
     ports:
       - "8080:8080" # Expose port 8080 to the host machine
-    volumes:
-      - ./redis/redis.conf:/etc/redis/redis.conf # Mount the custom Redis configuration
     env_file: 
       - .env # Load environment variables from .env file
 
